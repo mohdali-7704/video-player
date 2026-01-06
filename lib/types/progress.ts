@@ -15,6 +15,10 @@ export interface CourseProgress {
   completedVideos: number;
   totalVideos: number;
   lastAccessedVideoId?: string;
+  courseCompleted?: boolean;
+  completionDate?: string;
+  certificateGenerated?: boolean;
+  studentName?: string;
 }
 
 export interface UserProgress {

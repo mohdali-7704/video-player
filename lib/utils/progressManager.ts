@@ -121,4 +121,54 @@ export class ProgressManager {
 
     this.saveProgress(progress);
   }
+
+  // Check if course is completed
+  static isCourseCompleted(courseId: string): boolean {
+    const courseProgress = this.getCourseProgress(courseId);
+    if (!courseProgress) return false;
+
+    return courseProgress.completedVideos === courseProgress.totalVideos &&
+           courseProgress.totalVideos > 0;
+  }
+
+  // Mark course as completed and generate certificate
+  static markCourseCompleted(courseId: string): void {
+    const progress = this.loadProgress();
+
+    if (!progress.courses[courseId]) return;
+
+    const courseProgress = progress.courses[courseId];
+
+    if (this.isCourseCompleted(courseId)) {
+      courseProgress.courseCompleted = true;
+      courseProgress.completionDate = new Date().toISOString();
+      courseProgress.certificateGenerated = true;
+
+      this.saveProgress(progress);
+    }
+  }
+
+  // Save student name for certificate
+  static saveStudentName(courseId: string, studentName: string): void {
+    const progress = this.loadProgress();
+
+    if (!progress.courses[courseId]) return;
+
+    progress.courses[courseId].studentName = studentName;
+    this.saveProgress(progress);
+  }
+
+  // Get certificate data
+  static getCertificateData(courseId: string) {
+    const courseProgress = this.getCourseProgress(courseId);
+    if (!courseProgress?.certificateGenerated) return null;
+
+    return {
+      completionDate: courseProgress.completionDate,
+      certificateGenerated: courseProgress.certificateGenerated,
+      completedVideos: courseProgress.completedVideos,
+      totalVideos: courseProgress.totalVideos,
+      studentName: courseProgress.studentName
+    };
+  }
 }

@@ -1,18 +1,97 @@
-import { notFound } from 'next/navigation';
+'use client';
+
+import { useState, useEffect } from 'react';
+import { notFound, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { CourseLoader } from '@/lib/utils/courseLoader';
+import { Course } from '@/lib/types/course';
+import { ProgressManager } from '@/lib/utils/progressManager';
+import { CourseProgress } from '@/lib/types/progress';
+import Certificate from '@/components/certificate/Certificate';
 
-export default async function CoursePage({
+export default function CoursePage({
   params
 }: {
   params: Promise<{ courseId: string }>
 }) {
-  const { courseId } = await params;
-  const course = await CourseLoader.loadCourse(courseId);
+  const [course, setCourse] = useState<Course | null>(null);
+  const [courseId, setCourseId] = useState<string>('');
+  const [progress, setProgress] = useState<CourseProgress | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [studentName, setStudentName] = useState('');
+  const [showCertificate, setShowCertificate] = useState(false);
 
-  if (!course) {
-    notFound();
+  useEffect(() => {
+    const loadData = async () => {
+      const resolvedParams = await params;
+      setCourseId(resolvedParams.courseId);
+
+      const courseData = await CourseLoader.loadCourse(resolvedParams.courseId);
+      if (!courseData) {
+        notFound();
+      }
+
+      setCourse(courseData);
+
+      // Load progress
+      const courseProgress = ProgressManager.getCourseProgress(resolvedParams.courseId);
+      setProgress(courseProgress);
+
+      // Check if course is completed and mark it if not already marked
+      if (ProgressManager.isCourseCompleted(resolvedParams.courseId)) {
+        if (!courseProgress?.courseCompleted) {
+          // Course is completed but not marked - mark it now
+          ProgressManager.markCourseCompleted(resolvedParams.courseId);
+          // Reload progress to get updated values
+          const updatedProgress = ProgressManager.getCourseProgress(resolvedParams.courseId);
+          setProgress(updatedProgress);
+        }
+      }
+
+      // Load saved student name if exists
+      if (courseProgress?.studentName) {
+        setStudentName(courseProgress.studentName);
+      }
+
+      // Check if certificate was already generated and name exists
+      if (courseProgress?.certificateGenerated && courseProgress?.studentName) {
+        setShowCertificate(true);
+      }
+
+      setLoading(false);
+    };
+
+    loadData();
+  }, [params]);
+
+  const handleGenerateCertificate = () => {
+    if (studentName.trim()) {
+      // Save the student name to localStorage
+      ProgressManager.saveStudentName(courseId, studentName.trim());
+
+      // Update local state to reflect saved name
+      const updatedProgress = ProgressManager.getCourseProgress(courseId);
+      setProgress(updatedProgress);
+
+      setShowCertificate(true);
+    } else {
+      alert('Please enter your name to generate the certificate.');
+    }
+  };
+
+  if (loading || !course) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-50">
+        <div className="text-gray-900 text-lg">Loading...</div>
+      </div>
+    );
   }
+
+  // Check if course is completed (either by flag or by actual completion count)
+  const isCourseCompleted =
+    progress?.courseCompleted ||
+    (progress && progress.completedVideos === progress.totalVideos && progress.totalVideos > 0) ||
+    false;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -53,6 +132,36 @@ export default async function CoursePage({
               </div>
             </div>
           </div>
+
+          {/* Progress Bar */}
+          {progress && (
+            <div className="mt-6">
+              <div className="flex items-center justify-between text-sm mb-2">
+                <span className="font-medium text-gray-700">Course Progress</span>
+                <span className="text-gray-600">
+                  {progress.completedVideos} / {progress.totalVideos} videos completed
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className="bg-blue-600 h-2 rounded-full transition-all"
+                  style={{
+                    width: `${progress.totalVideos > 0 ? (progress.completedVideos / progress.totalVideos) * 100 : 0}%`
+                  }}
+                ></div>
+              </div>
+              {isCourseCompleted && (
+                <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
+                  <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="text-green-800 font-medium">
+                    Course Completed! Your certificate is ready below.
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Course Content */}
@@ -100,6 +209,49 @@ export default async function CoursePage({
             ))}
           </div>
         </div>
+
+        {/* Certificate Section */}
+        {isCourseCompleted && (
+          <div className="mt-6">
+            {!showCertificate ? (
+              <div className="bg-white rounded-lg shadow p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                    <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900">Get Your Certificate</h2>
+                    <p className="text-gray-600">Enter your name to generate your completion certificate</p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <input
+                    type="text"
+                    placeholder="Enter your full name"
+                    value={studentName}
+                    onChange={(e) => setStudentName(e.target.value)}
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleGenerateCertificate();
+                      }
+                    }}
+                  />
+                  <button
+                    onClick={handleGenerateCertificate}
+                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium"
+                  >
+                    Generate Certificate
+                  </button>
+                </div>
+              </div>
+            ) : (
+              progress && <Certificate course={course} progress={progress} studentName={studentName} />
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

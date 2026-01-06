@@ -8,6 +8,7 @@ import RestrictedVideoPlayer from '@/components/video/RestrictedVideoPlayer';
 import Quiz from '@/components/quiz/Quiz';
 import CourseSidebar from '@/components/course/CourseSidebar';
 import { useProgressTracking } from '@/lib/hooks/useProgressTracking';
+import { ProgressManager } from '@/lib/utils/progressManager';
 
 export default function VideoPage({
   params
@@ -63,6 +64,11 @@ export default function VideoPage({
 
   const handleQuizComplete = (result: any) => {
     markQuizCompleted(videoId, result.score);
+
+    // Check if this was the last video and mark course as completed
+    if (ProgressManager.isCourseCompleted(courseId)) {
+      ProgressManager.markCourseCompleted(courseId);
+    }
   };
 
   const handleProceedToNext = () => {
