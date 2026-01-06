@@ -1,0 +1,22 @@
+{
+  "courses": [
+    {
+      "id": "course-001",
+      "title": "Introduction to Web Development",
+      "description": "Learn the fundamentals of web development from scratch. Master HTML, CSS, and JavaScript basics.",
+      "thumbnail": "/thumbnails/course-001.jpg",
+      "videoCount": 3,
+      "duration": "2 hours",
+      "level": "Beginner"
+    },
+    {
+      "id": "course-002",
+      "title": "Advanced JavaScript Concepts",
+      "description": "Deep dive into advanced JavaScript topics including closures, async programming, and design patterns.",
+      "thumbnail": "/thumbnails/course-002.jpg",
+      "videoCount": 4,
+      "duration": "3.5 hours",
+      "level": "Advanced"
+    }
+  ]
+}

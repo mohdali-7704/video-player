@@ -1,0 +1,75 @@
+'use client';
+
+interface QuizOptionProps {
+  option: string;
+  index: number;
+  isSelected: boolean;
+  isCorrect?: boolean;
+  showResult: boolean;
+  onSelect: (index: number) => void;
+  disabled: boolean;
+}
+
+export default function QuizOption({
+  option,
+  index,
+  isSelected,
+  isCorrect,
+  showResult,
+  onSelect,
+  disabled
+}: QuizOptionProps) {
+  const getOptionClasses = () => {
+    let classes = 'w-full text-left p-4 rounded-lg border-2 transition-all ';
+
+    if (showResult) {
+      if (isCorrect) {
+        classes += 'border-green-500 bg-green-50 text-green-900';
+      } else if (isSelected && !isCorrect) {
+        classes += 'border-red-500 bg-red-50 text-red-900';
+      } else {
+        classes += 'border-gray-300 bg-gray-50 text-gray-700';
+      }
+    } else {
+      if (isSelected) {
+        classes += 'border-blue-500 bg-blue-50 text-blue-900';
+      } else {
+        classes += 'border-gray-300 bg-white hover:border-blue-300 hover:bg-blue-50';
+      }
+    }
+
+    if (disabled && !showResult) {
+      classes += ' cursor-not-allowed opacity-50';
+    } else if (!showResult) {
+      classes += ' cursor-pointer';
+    }
+
+    return classes;
+  };
+
+  const getOptionLabel = (idx: number) => {
+    return String.fromCharCode(65 + idx); // A, B, C, D
+  };
+
+  return (
+    <button
+      type="button"
+      className={getOptionClasses()}
+      onClick={() => !disabled && !showResult && onSelect(index)}
+      disabled={disabled && !showResult}
+    >
+      <div className="flex items-start gap-3">
+        <div className="flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center text-sm font-bold">
+          {getOptionLabel(index)}
+        </div>
+        <div className="flex-1 text-left">{option}</div>
+        {showResult && isCorrect && (
+          <div className="flex-shrink-0 text-green-600">✓</div>
+        )}
+        {showResult && isSelected && !isCorrect && (
+          <div className="flex-shrink-0 text-red-600">✗</div>
+        )}
+      </div>
+    </button>
+  );
+}

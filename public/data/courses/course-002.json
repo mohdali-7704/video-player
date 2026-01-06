@@ -1,0 +1,87 @@
+{
+  "id": "course-002",
+  "title": "Advanced JavaScript Concepts",
+  "description": "Deep dive into advanced JavaScript topics including closures, async programming, and design patterns. Perfect for developers looking to master JavaScript.",
+  "instructor": "Jane Smith",
+  "thumbnail": "/thumbnails/course-002.jpg",
+  "duration": "3.5 hours",
+  "level": "Advanced",
+  "videos": [
+    {
+      "id": "video-004",
+      "title": "Understanding Closures",
+      "description": "Master JavaScript closures - lexical scope, function factories, and practical applications.",
+      "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+      "duration": 15,
+      "order": 1,
+      "quiz": {
+        "id": "quiz-004",
+        "title": "Closures Quiz",
+        "questions": [
+          {
+            "id": "q9",
+            "question": "What is a closure in JavaScript?",
+            "options": [
+              "A function that closes the browser",
+              "A function that has access to variables in its outer scope",
+              "A method to close database connections",
+              "A way to end a program"
+            ],
+            "correctAnswer": 1,
+            "explanation": "A closure is a function that has access to variables in its outer (enclosing) lexical scope, even after the outer function has returned."
+          },
+          {
+            "id": "q10",
+            "question": "When is a closure created?",
+            "options": [
+              "When a variable is declared",
+              "When a function is defined inside another function",
+              "When a loop ends",
+              "When an object is created"
+            ],
+            "correctAnswer": 1,
+            "explanation": "A closure is created when a function is defined inside another function, allowing the inner function to access the outer function's variables."
+          }
+        ]
+      }
+    },
+    {
+      "id": "video-005",
+      "title": "Async JavaScript and Promises",
+      "description": "Learn asynchronous programming with Promises, async/await, and error handling.",
+      "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+      "duration": 15,
+      "order": 2,
+      "quiz": {
+        "id": "quiz-005",
+        "title": "Async Programming Quiz",
+        "questions": [
+          {
+            "id": "q11",
+            "question": "What does the 'await' keyword do?",
+            "options": [
+              "Speeds up code execution",
+              "Pauses execution until a Promise is resolved",
+              "Creates a new Promise",
+              "Cancels an asynchronous operation"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The 'await' keyword pauses the execution of an async function until the Promise is resolved, making async code look synchronous."
+          },
+          {
+            "id": "q12",
+            "question": "Which method is used to handle Promise rejections?",
+            "options": [
+              ".then()",
+              ".catch()",
+              ".finally()",
+              ".reject()"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The .catch() method is used to handle Promise rejections (errors). It catches any errors that occur in the Promise chain."
+          }
+        ]
+      }
+    }
+  ]
+}

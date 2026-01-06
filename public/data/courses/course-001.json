@@ -1,0 +1,149 @@
+{
+  "id": "course-001",
+  "title": "Introduction to Web Development",
+  "description": "Learn the fundamentals of web development from scratch. Master HTML, CSS, and JavaScript basics to build your first website.",
+  "instructor": "John Doe",
+  "thumbnail": "/thumbnails/course-001.jpg",
+  "duration": "2 hours",
+  "level": "Beginner",
+  "videos": [
+    {
+      "id": "video-001",
+      "title": "Getting Started with HTML",
+      "description": "Introduction to HTML basics - learn about tags, elements, and document structure.",
+      "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+      "duration": 596,
+      "order": 1,
+      "quiz": {
+        "id": "quiz-001",
+        "title": "HTML Basics Quiz",
+        "questions": [
+          {
+            "id": "q1",
+            "question": "What does HTML stand for?",
+            "options": [
+              "Hyper Text Markup Language",
+              "High Tech Modern Language",
+              "Home Tool Markup Language",
+              "Hyperlinks and Text Markup Language"
+            ],
+            "correctAnswer": 0,
+            "explanation": "HTML stands for Hyper Text Markup Language. It's the standard markup language for creating web pages."
+          },
+          {
+            "id": "q2",
+            "question": "Which tag is used for the largest heading?",
+            "options": [
+              "<h6>",
+              "<h1>",
+              "<heading>",
+              "<head>"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The <h1> tag represents the largest and most important heading. Headings range from <h1> (largest) to <h6> (smallest)."
+          },
+          {
+            "id": "q3",
+            "question": "What is the correct HTML element for inserting a line break?",
+            "options": [
+              "<break>",
+              "<lb>",
+              "<br>",
+              "<newline>"
+            ],
+            "correctAnswer": 2,
+            "explanation": "The <br> tag is used to insert a line break in HTML. It's a self-closing tag."
+          }
+        ]
+      }
+    },
+    {
+      "id": "video-002",
+      "title": "CSS Fundamentals",
+      "description": "Learn CSS styling basics - colors, fonts, layouts, and the box model.",
+      "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+      "duration": 653,
+      "order": 2,
+      "quiz": {
+        "id": "quiz-002",
+        "title": "CSS Basics Quiz",
+        "questions": [
+          {
+            "id": "q4",
+            "question": "Which property is used to change the text color in CSS?",
+            "options": [
+              "text-color",
+              "color",
+              "font-color",
+              "text-style"
+            ],
+            "correctAnswer": 1,
+            "explanation": "The 'color' property is used to change the text color in CSS. For example: color: red;"
+          },
+          {
+            "id": "q5",
+            "question": "What does CSS stand for?",
+            "options": [
+              "Computer Style Sheets",
+              "Cascading Style Sheets",
+              "Creative Style Sheets",
+              "Colorful Style Sheets"
+            ],
+            "correctAnswer": 1,
+            "explanation": "CSS stands for Cascading Style Sheets. It describes how HTML elements are to be displayed."
+          },
+          {
+            "id": "q6",
+            "question": "Which CSS property controls the text size?",
+            "options": [
+              "text-size",
+              "font-style",
+              "text-style",
+              "font-size"
+            ],
+            "correctAnswer": 3,
+            "explanation": "The 'font-size' property is used to control the size of text. For example: font-size: 16px;"
+          }
+        ]
+      }
+    },
+    {
+      "id": "video-003",
+      "title": "JavaScript Introduction",
+      "description": "Introduction to JavaScript programming - variables, functions, and DOM manipulation.",
+      "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+      "duration": 15,
+      "order": 3,
+      "quiz": {
+        "id": "quiz-003",
+        "title": "JavaScript Basics Quiz",
+        "questions": [
+          {
+            "id": "q7",
+            "question": "Which keyword is used to declare a constant in JavaScript?",
+            "options": [
+              "var",
+              "let",
+              "const",
+              "constant"
+            ],
+            "correctAnswer": 2,
+            "explanation": "The 'const' keyword is used to declare constants in JavaScript. Once assigned, the value cannot be reassigned."
+          },
+          {
+            "id": "q8",
+            "question": "What symbol is used for single-line comments in JavaScript?",
+            "options": [
+              "//",
+              "/* */",
+              "#",
+              "--"
+            ],
+            "correctAnswer": 0,
+            "explanation": "Double forward slashes (//) are used for single-line comments in JavaScript. Multi-line comments use /* */."
+          }
+        ]
+      }
+    }
+  ]
+}
