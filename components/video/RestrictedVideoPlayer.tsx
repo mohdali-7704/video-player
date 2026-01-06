@@ -22,12 +22,14 @@ export default function RestrictedVideoPlayer({
   onProgressUpdate,
   onVideoComplete
 }: RestrictedVideoPlayerProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null!);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(initialProgress?.currentTime || 0);
   const [duration, setDuration] = useState(0);
   const [maxWatchedTime, setMaxWatchedTime] = useState(initialProgress?.maxWatchedTime || 0);
   const [videoCompleted, setVideoCompleted] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Handle tab switch - restart video
   const handleTabSwitch = () => {
@@ -148,15 +150,49 @@ export default function RestrictedVideoPlayer({
     }
   };
 
+  // Fullscreen handlers
+  const handleFullscreen = async () => {
+    if (!containerRef.current) return;
+
+    try {
+      if (!document.fullscreenElement) {
+        await containerRef.current.requestFullscreen();
+        setIsFullscreen(true);
+      } else {
+        await document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    } catch (error) {
+      console.error('Error toggling fullscreen:', error);
+    }
+  };
+
+  // Listen for fullscreen changes
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
   return (
-    <div className="w-full bg-black">
+    <div
+      ref={containerRef}
+      className={`w-full bg-black ${isFullscreen ? 'h-screen flex flex-col' : ''}`}
+    >
       {/* Video Element */}
-      <div className="relative aspect-video bg-black">
+      <div className={`relative bg-black flex items-center justify-center w-full ${
+        isFullscreen ? 'flex-1 h-full' : 'max-h-[70vh]'
+      }`}>
         <video
           ref={videoRef}
           src={videoUrl}
-          className="w-full h-full"
-          controlsList="nodownload nofullscreen noremoteplayback"
+          className={`object-contain ${isFullscreen ? 'w-full h-full' : 'w-full max-h-[70vh]'}`}
+          controlsList="nodownload noremoteplayback"
           disablePictureInPicture
           onTimeUpdate={handleTimeUpdate}
           onSeeking={handleSeeking}
@@ -174,16 +210,20 @@ export default function RestrictedVideoPlayer({
       </div>
 
       {/* Custom Controls */}
-      <VideoControls
-        isPlaying={isPlaying}
-        currentTime={currentTime}
-        duration={duration}
-        maxWatchedTime={maxWatchedTime}
-        onPlay={handlePlay}
-        onPause={handlePause}
-        onSeek={handleSeek}
-        onRewind={handleRewind}
-      />
+      <div className={isFullscreen ? 'w-full' : 'w-full'}>
+        <VideoControls
+          isPlaying={isPlaying}
+          currentTime={currentTime}
+          duration={duration}
+          maxWatchedTime={maxWatchedTime}
+          isFullscreen={isFullscreen}
+          onPlay={handlePlay}
+          onPause={handlePause}
+          onSeek={handleSeek}
+          onRewind={handleRewind}
+          onFullscreen={handleFullscreen}
+        />
+      </div>
 
       {/* Completion Message */}
       {videoCompleted && (

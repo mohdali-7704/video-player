@@ -1,3 +1,5 @@
+import { Quiz } from './quiz';
+
 export interface Course {
   id: string;
   title: string;
@@ -34,4 +36,4 @@ export interface CourseCatalog {
 }
 
 // Re-export Quiz type for convenience
-export type { Quiz } from './quiz';
+export type { Quiz };
