@@ -1,0 +1,37 @@
+{
+  "ads": [
+    {
+      "id": "ad-001",
+      "title": "Sample Product Ad",
+      "description": "Amazing product that you'll love",
+      "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+      "duration": 15,
+      "ctaText": "Learn More",
+      "ctaUrl": "https://example.com/product",
+      "skipDelay": 5,
+      "active": true
+    },
+    {
+      "id": "ad-002",
+      "title": "Service Promotion",
+      "description": "Professional service for your needs",
+      "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+      "duration": 15,
+      "ctaText": "Get Started",
+      "ctaUrl": "https://example.com/service",
+      "skipDelay": 5,
+      "active": true
+    },
+    {
+      "id": "ad-003",
+      "title": "Special Offer",
+      "description": "Limited time special offer just for you",
+      "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+      "duration": 15,
+      "ctaText": "Claim Offer",
+      "ctaUrl": "https://example.com/offer",
+      "skipDelay": 5,
+      "active": true
+    }
+  ]
+}

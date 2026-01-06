@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { notFound, useRouter } from 'next/navigation';
 import { CourseLoader } from '@/lib/utils/courseLoader';
 import { Course, Video } from '@/lib/types/course';
-import RestrictedVideoPlayer from '@/components/video/RestrictedVideoPlayer';
+import VideoPlayerWithAds from '@/components/video/VideoPlayerWithAds';
 import Quiz from '@/components/quiz/Quiz';
 import CourseSidebar from '@/components/course/CourseSidebar';
 import { useProgressTracking } from '@/lib/hooks/useProgressTracking';
@@ -108,7 +108,7 @@ export default function VideoPage({
       <div className="flex-1 flex flex-col overflow-auto">
         {!showQuiz ? (
           <div className="flex-1 flex flex-col">
-            <RestrictedVideoPlayer
+            <VideoPlayerWithAds
               videoUrl={video.videoUrl}
               videoId={video.id}
               courseId={courseId}
