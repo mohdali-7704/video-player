@@ -24,17 +24,17 @@ export default function QuizOption({
 
     if (showResult) {
       if (isCorrect) {
-        classes += 'border-green-500 bg-green-50 text-green-900';
+        classes += 'border-green-600 bg-green-100 text-green-900 font-medium';
       } else if (isSelected && !isCorrect) {
-        classes += 'border-red-500 bg-red-50 text-red-900';
+        classes += 'border-red-600 bg-red-100 text-red-900 font-medium';
       } else {
-        classes += 'border-gray-300 bg-gray-50 text-gray-700';
+        classes += 'border-gray-400 bg-gray-100 text-gray-800';
       }
     } else {
       if (isSelected) {
-        classes += 'border-blue-500 bg-blue-50 text-blue-900';
+        classes += 'border-blue-600 bg-blue-100 text-blue-900 font-medium';
       } else {
-        classes += 'border-gray-300 bg-white hover:border-blue-300 hover:bg-blue-50';
+        classes += 'border-gray-400 bg-white text-gray-900 hover:border-blue-400 hover:bg-blue-50';
       }
     }
 
