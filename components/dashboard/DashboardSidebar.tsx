@@ -17,6 +17,8 @@ export default function DashboardSidebar() {
 
   const navLinks = [
     { href: '/dashboard', label: 'Dashboard', icon: '📊' },
+    { href: '/dashboard/courses', label: 'Courses', icon: '📚' },
+    { href: '/dashboard/courses/upload', label: 'Upload Course', icon: '➕' },
     { href: '/dashboard/ads', label: 'Ad Analytics', icon: '📺' },
   ];
 
@@ -25,7 +27,7 @@ export default function DashboardSidebar() {
       {/* Logo/Header */}
       <div className="p-6 border-b border-gray-800">
         <h1 className="text-xl font-bold">Admin Dashboard</h1>
-        <p className="text-sm text-gray-400 mt-1">Ad Analytics</p>
+        <p className="text-sm text-gray-400 mt-1">Course Management</p>
       </div>
 
       {/* Navigation Links */}

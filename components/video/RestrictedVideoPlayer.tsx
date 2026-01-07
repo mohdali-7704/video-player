@@ -24,12 +24,17 @@ export default function RestrictedVideoPlayer({
 }: RestrictedVideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null!);
   const containerRef = useRef<HTMLDivElement>(null);
+  const hideControlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(initialProgress?.currentTime || 0);
   const [duration, setDuration] = useState(0);
   const [maxWatchedTime, setMaxWatchedTime] = useState(initialProgress?.maxWatchedTime || 0);
   const [videoCompleted, setVideoCompleted] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [volume, setVolume] = useState(1.0);
+  const [isMuted, setIsMuted] = useState(false);
+  const [showControls, setShowControls] = useState(true);
+  const [showPlayPauseIcon, setShowPlayPauseIcon] = useState(false);
 
   // Handle tab switch - restart video
   const handleTabSwitch = () => {
@@ -150,6 +155,36 @@ export default function RestrictedVideoPlayer({
     }
   };
 
+  // Volume handlers
+  const handleVolumeChange = (newVolume: number) => {
+    setVolume(newVolume);
+    setIsMuted(newVolume === 0);
+    if (videoRef.current) {
+      videoRef.current.volume = newVolume;
+    }
+  };
+
+  const handleToggleMute = () => {
+    const newMutedState = !isMuted;
+    setIsMuted(newMutedState);
+    if (videoRef.current) {
+      videoRef.current.muted = newMutedState;
+    }
+  };
+
+  // Click video to toggle play/pause
+  const handleVideoClick = () => {
+    if (isPlaying) {
+      handlePause();
+    } else {
+      handlePlay();
+    }
+
+    // Show play/pause icon briefly
+    setShowPlayPauseIcon(true);
+    setTimeout(() => setShowPlayPauseIcon(false), 500);
+  };
+
   // Fullscreen handlers
   const handleFullscreen = async () => {
     if (!containerRef.current) return;
@@ -179,15 +214,62 @@ export default function RestrictedVideoPlayer({
     };
   }, []);
 
+  // Set initial video volume
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.volume = volume;
+      videoRef.current.muted = isMuted;
+    }
+  }, [volume, isMuted]);
+
+  // Auto-hide controls in fullscreen
+  useEffect(() => {
+    if (!isFullscreen) {
+      setShowControls(true);
+      return;
+    }
+
+    const handleMouseMove = () => {
+      setShowControls(true);
+
+      // Clear existing timeout
+      if (hideControlsTimeoutRef.current) {
+        clearTimeout(hideControlsTimeoutRef.current);
+      }
+
+      // Hide controls after 3 seconds of inactivity
+      hideControlsTimeoutRef.current = setTimeout(() => {
+        setShowControls(false);
+      }, 3000);
+    };
+
+    // Show controls on any mouse movement
+    document.addEventListener('mousemove', handleMouseMove);
+
+    // Initial timeout
+    handleMouseMove();
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      if (hideControlsTimeoutRef.current) {
+        clearTimeout(hideControlsTimeoutRef.current);
+      }
+    };
+  }, [isFullscreen]);
+
   return (
     <div
       ref={containerRef}
-      className={`w-full bg-black ${isFullscreen ? 'h-screen flex flex-col' : ''}`}
+      className={`w-full bg-black relative ${isFullscreen ? 'h-screen flex flex-col' : ''}`}
     >
-      {/* Video Element */}
-      <div className={`relative bg-black flex items-center justify-center w-full ${
-        isFullscreen ? 'flex-1 h-full' : 'max-h-[70vh]'
-      }`}>
+      {/* Video Element Container */}
+      <div
+        className={`relative bg-black flex items-center justify-center w-full ${
+          isFullscreen ? 'flex-1 h-full' : 'max-h-[70vh]'
+        }`}
+        onClick={handleVideoClick}
+        style={{ cursor: 'pointer' }}
+      >
         <video
           ref={videoRef}
           src={videoUrl}
@@ -202,28 +284,73 @@ export default function RestrictedVideoPlayer({
           style={{ userSelect: 'none' }}
         />
 
-        {/* Overlay to prevent right-click */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ userSelect: 'none' }}
-        />
+        {/* Play/Pause Icon Overlay */}
+        {showPlayPauseIcon && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="bg-black bg-opacity-60 rounded-full p-6 animate-fade-in-out">
+              {isPlaying ? (
+                <svg className="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              ) : (
+                <svg className="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+                </svg>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Controls Overlay in Fullscreen */}
+        {isFullscreen && (
+          <div
+            className={`absolute bottom-0 left-0 right-0 transition-opacity duration-300 ${
+              showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+            onMouseEnter={() => setShowControls(true)}
+          >
+            <VideoControls
+              isPlaying={isPlaying}
+              currentTime={currentTime}
+              duration={duration}
+              maxWatchedTime={maxWatchedTime}
+              isFullscreen={isFullscreen}
+              volume={volume}
+              isMuted={isMuted}
+              onPlay={handlePlay}
+              onPause={handlePause}
+              onSeek={handleSeek}
+              onRewind={handleRewind}
+              onFullscreen={handleFullscreen}
+              onVolumeChange={handleVolumeChange}
+              onToggleMute={handleToggleMute}
+            />
+          </div>
+        )}
       </div>
 
-      {/* Custom Controls */}
-      <div className={isFullscreen ? 'w-full' : 'w-full'}>
-        <VideoControls
-          isPlaying={isPlaying}
-          currentTime={currentTime}
-          duration={duration}
-          maxWatchedTime={maxWatchedTime}
-          isFullscreen={isFullscreen}
-          onPlay={handlePlay}
-          onPause={handlePause}
-          onSeek={handleSeek}
-          onRewind={handleRewind}
-          onFullscreen={handleFullscreen}
-        />
-      </div>
+      {/* Custom Controls (below video when not fullscreen) */}
+      {!isFullscreen && (
+        <div className="w-full" onClick={(e) => e.stopPropagation()}>
+          <VideoControls
+            isPlaying={isPlaying}
+            currentTime={currentTime}
+            duration={duration}
+            maxWatchedTime={maxWatchedTime}
+            isFullscreen={isFullscreen}
+            volume={volume}
+            isMuted={isMuted}
+            onPlay={handlePlay}
+            onPause={handlePause}
+            onSeek={handleSeek}
+            onRewind={handleRewind}
+            onFullscreen={handleFullscreen}
+            onVolumeChange={handleVolumeChange}
+            onToggleMute={handleToggleMute}
+          />
+        </div>
+      )}
 
       {/* Completion Message */}
       {videoCompleted && (
